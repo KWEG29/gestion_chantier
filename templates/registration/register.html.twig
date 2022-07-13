@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ asset('css/registration.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/CSS/fontawesome/css/all.min.css') }}">
+    <title>Inscription</title>
+</head>
+<body>
+    <div id="header">
+        Africa - Etudes
+    </div>
+
+    <div id="section">
+        <div id="titre">
+            Inscrivez vous et créez un compte
+        </div>
+
+        <hr id="hr-titre">
+
+        {{ form_start(registrationForm) }}
+            <div class="champ">{{ form_row(registrationForm.nom) }}</div>
+            
+            <div class="champ">{{ form_row(registrationForm.prenom) }}</div>
+           
+            <div class="champ">{{ form_row(registrationForm.email) }}</div>
+            
+            <div class="champ">{{ form_row(registrationForm.telephone) }}</div>
+            
+            <div id='poste'>
+                <div id='poste-titre'>Poste</div>
+                {{ form_row(registrationForm.poste) }}
+            </div>
+            
+            <div class="champ">{{ form_row(registrationForm.plainPassword) }}</div>
+            
+            {{ form_row(registrationForm.agreeTerms) }}
+            
+            <p>Vous avez déja un compte ? <a href="/login">Connectez vous</a></p>
+            
+            <button type="submit" class="btn">M'inscrire</button>
+        {{ form_end(registrationForm) }}
+
+        <div id="footer"><p><i class="fa fa-copyright"></i> Tout droits réservés , Awesome Dev Studio 2022</p></div>
+    </div>
+
+    
+</body>
+</html>

@@ -1,0 +1,398 @@
+{% extends "base.html.twig" %}
+
+{% block title %} {{ projet.nom }} {% endblock %}
+
+{% block css %}<link rel="stylesheet" href="{{ asset('css/show_projet.css') }}">{% endblock %}
+
+{% block body %}
+    <div id="header">
+        <div id="logo"><img src="{{ asset('images/AE-PNG.png') }}" alt="Logo" width="100%" height='100%'></div>
+
+        <div id="infos">
+            <p id="infos-h">Informations</p>
+            <p><span>Nom&Prenom</span> : {{ user.prenom }} {{ user.nom }}</p>
+            <p><span>Fonction</span> : {{ user.poste }} </p>
+            <p id='btn'><a href="/logout"><button id='decon'>Se deconncecter</button></a></p>
+        </div>
+    </div>
+
+    <h1> {{ projet.nom }} </h1>
+    <hr class='hr-titre hr1'>
+
+    <h2>Informations recapitulatives du projet</h2>
+
+    <table border='1'>
+        <thead>
+            <tr>
+                <td>Date de demarrage</td>
+                <td>Delai (mois)</td>
+                <td>Budget (fcfa)</td>
+                <td>Code du projet</td>
+                <td>Statut</td>
+                <td>Date de fin</td>
+                {% if projet.estTermine == false %} 
+                    {% if user.poste != 'Client'%}
+                        <td>Option</td>
+                    {% endif %}
+                {% endif %}
+
+            </tr>
+        </thead>
+
+        <tbody>
+            <tr>
+                <td>{{ projet.demarrage|date("d/m/Y") }}</td>
+                <td>{{ projet.delai }}</td>
+                <td>{{ projet.budget }}</td>
+                <td>{{ projet.code }}</td>
+                <td>
+                    {% if projet.estTermine %}
+                        Terminé
+                    {% else %}
+                        En cours
+                    {% endif %}
+                </td>
+                <td>
+                    {% if projet.estTermine %}
+                        {{ projet.fin|date("d/m/Y") }}
+                    {% endif %}
+                </td>
+                {% if projet.estTermine == false %} 
+                    {% if user.poste != 'Client' %}
+                        <td><a href="/termine/projets/{{ projet.id }}">Marquer comme terminé</a></td>
+                    {% endif %}
+                {% endif %}
+            </tr>
+        </tbody>
+    </table>
+    
+    <h1>Planning</h1>
+    <hr class='hr-titre hr2'>
+
+    {% if projet.planning %}
+            {% if taches|length > 0 %}
+                <h2>Planning complet des tâches</h2>
+
+                <table border="1">
+                    <thead>
+                        <tr>
+                            <td>Tâches</td>
+                            <td>Date de début prévisonnielle</td>
+                            <td>Delai (nombre de mois)</td>
+                            <td>Coût prévisonnielle(fcfa)</td>
+                            <td>Date de début réelle</td>
+                            <td>Date de fin</td>
+                            <td>Durée réelle</td>
+                            <td>Coût réelle (fcfa)</td>
+                            <td>Statut</td>
+                            {% if user.poste != 'Client' %}
+                                <td>Options</td>    
+                            {% endif %}
+                            
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        {% for tache in taches %}
+                            <tr>
+                                <td>{{ tache.intitule }}</td>
+                                <td>{{ tache.debutPrev|date("d/m/Y") }}</td>
+                                <td>{{ tache.delai }}</td>
+                                <td>{{ tache.coutBase }}</td>
+                                <td>
+                                    {% if tache.debutReel %}
+                                        {{ tache.debutReel|date("d/m/Y") }}
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if tache.dateFin %}
+                                        {{ tache.dateFin|date("d/m/Y") }}
+                                    {% endif %}
+                                </td>
+                                <td>{{ tache.delaiReel}}</td>
+                                <td>{{ tache.coutReel }}</td>
+                                {% if tache.estRealise %}
+                                    <td>Realisée</td>
+                                    {% else %}
+                                    <td>Non realisée</td>
+                                {% endif %}
+                                {% if user.poste != 'Client' %}
+                                    <td><a href="/projets/{{ projet.id }}/planning/{{ planning.id }}/tache/{{ tache.id }}/edit">Modifier</a> <br> <a href="/projets/{{ projet.id }}/planning/{{ planning.id }}/tache/{{ tache.id }}/delete">Supprimer</a></td>
+                                {% endif %}
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                <br>
+
+                <h2>Planning des tâches non encore réalisées</h2>
+                <table border="1">
+                    <thead>
+                        <tr>
+                            <td>Tâches</td>
+                            <td>Date de début prévisonnielle</td>
+                            <td>Delai (nombre de mois)</td>
+                            <td>Coût prévisonnielle(fcfa)</td>
+                            <td>Date de début réelle</td>
+                            <td>Date de fin</td>
+                            <td>Durée réelle</td>
+                            <td>Coût réelle (fcfa)</td>
+                            <td>Statut</td>
+                            {% if user.poste != 'Client' %}
+                                <td>Options</td>
+                            {% endif %}    
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        {% for tache in taches %}
+                            {% if tache.estRealise == false %}
+                                <tr>
+                                    <td>{{ tache.intitule }}</td>
+                                    <td>{{ tache.debutPrev|date("d/m/Y") }}</td>
+                                    <td>{{ tache.delai }}</td>
+                                    <td>{{ tache.coutBase }}</td>
+                                    <td>
+                                        {% if tache.debutReel %}
+                                            {{ tache.debutReel|date("d/m/Y") }}
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {% if tache.dateFin %}
+                                            {{ tache.dateFin|date("d/m/Y") }}
+                                        {% endif %}
+                                    </td>
+                                    <td>{{ tache.delaiReel}}</td>
+                                    <td>{{ tache.coutReel }}</td>
+                                    {% if tache.estRealise %}
+                                        <td>Realisée</td>
+                                        {% else %}
+                                        <td>Non realisée</td>
+                                    {% endif %}
+
+                                    {% if user.poste != 'Client' %}
+                                        <td><a href="/projets/{{ projet.id }}/planning/{{ planning.id }}/tache/{{ tache.id }}/edit">Modifier</a> <br> <a href="/projets/{{ projet.id }}/planning/{{ planning.id }}/tache/{{ tache.id }}/delete">Supprimer</a></td>
+                                    {% endif %}
+                                    
+                                </tr>    
+                            {% endif %}
+                        {% endfor %}
+                    </tbody>
+                </table>
+
+                <h2>Tâches déja réalisées</h2>
+                <table border="1">
+                    <thead>
+                        <tr>
+                            <td>Tâches</td>
+                            <td>Date de début prévisonnielle</td>
+                            <td>Delai (nombre de mois)</td>
+                            <td>Coût prévisonnielle(fcfa)</td>
+                            <td>Date de début réelle</td>
+                            <td>Date de fin</td>
+                            <td>Durée réelle</td>
+                            <td>Coût réelle (fcfa)</td>
+                            <td>Statut</td>
+                            {% if user.poste != 'Client' %}
+                                <td>Options</td>            
+                            {% endif %}
+                            
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        {% for tache in taches %}
+                            {% if tache.estRealise == true %}
+                                <tr>
+                                    <td>{{ tache.intitule }}</td>
+                                    <td>{{ tache.debutPrev|date("d/m/Y") }}</td>
+                                    <td>{{ tache.delai }}</td>
+                                    <td>{{ tache.coutBase }}</td>
+                                    <td>
+                                        {% if tache.debutReel %}
+                                            {{ tache.debutReel|date("d/m/Y") }}
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {% if tache.dateFin %}
+                                            {{ tache.dateFin|date("d/m/Y") }}
+                                        {% endif %}
+                                    </td>
+                                    <td>{{ tache.delaiReel}}</td>
+                                    <td>{{ tache.coutReel }}</td>
+                                    {% if tache.estRealise %}
+                                        <td>Realisée</td>
+                                        {% else %}
+                                        <td>Non realisée</td>
+                                    {% endif %}
+
+                                    {% if user.poste != 'Client' %}
+                                        <td><a href="/projets/{{ projet.id }}/planning/{{ planning.id }}/tache/{{ tache.id }}/edit">Modifier</a> <br> <a href="/projets/{{ projet.id }}/planning/{{ planning.id }}/tache/{{ tache.id }}/delete">Supprimer</a></td>
+                                    {% endif %}        
+                                </tr>    
+                            {% endif %}
+                        {% endfor %}
+                    </tbody>
+                </table>
+
+                {% else %}
+                <h2>Pour l'instant il n'y aucune tâche dans le planning</h2>
+            {% endif %}
+            {% if user.poste != 'Client' %}
+                <h3><a href="/projets/{{ projet.id }}/planning/{{ planning.id }}/addTache"><button class='add'>Ajouter une tâche</button></a></h3>                            
+            {% endif %}
+            
+        {% else %}
+            <h2>Vous n'avez pas encore enregistrer le planning</h2>
+
+            <h3><a href="/projets/{{ projet.id }}/add_planning">Débuter un planning</a></h3>
+    {% endif %}
+
+    <h1>Approvisionnement</h1>
+    <hr class='hr-titre'>
+
+    {% if projet.approvisionnement %}
+            {% if elements|length > 0 %}
+                <h2>Etat de l'approvisionnement</h2>
+                <table border="1">
+                    <thead>
+                        <td>Elément</td>
+                        <td>Unité d'oeuvre</td>
+                        <td>Stock restant</td>
+                        {% if user.poste != 'Client' %}
+                            <td>Options</td>     
+                        {% endif %}
+                    </thead>
+
+                    <tbody>
+                        {% for element in elements %}
+                            <tr>
+                                <td>{{ element.nom }}</td>
+                                <td>{{ element.UniteOeuvre}}</td>
+                                <td>{{ element.stockRestant }}</td>
+                                {% if user.poste != 'Client' %}
+                                    <td><a href="/projets/{{ projet.id }}/approv/{{ approv.id }}/element/{{ element.id }}/edit">Modifier</a> <br> <a href="/projets/{{ projet.id }}/approv/{{ approv.id }}/element/{{ element.id }}/delete">Supprimer</a></td>
+                                {% endif %}
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                <br>
+
+                {% else %}
+                <h2>Pour l'instant vous n'avez enregistré aucun élément d'approvisionnement</h2>
+            {% endif %}
+            {% if user.poste != 'Client' %}
+                <h3><a href="/projets/{{ projet.id }}/approv/{{ approv.id }}/addElement"><button class='add'>Ajouter un élément</button></a></h3>                            
+            {% endif %}
+            
+        {% else %}
+            <h2>Vous n'avez pas encore fait l'état de l'approvisionnement</h2>
+            
+            <h3><a href="/projets/{{ projet.id }}/add_approv">En créer un</a></h3>
+    {% endif %}
+
+    <h1>Exécution financière</h1>
+    <hr class='hr-titre'>
+
+    <table border="1">
+        <thead>
+            <td>Designation</td>
+            <td>Montant Contrat TTC (fcfa)</td>
+            <td>Montant total engagé</td>
+            <td>Taux d'exécution financière</td>
+            {% if user.poste != 'Client' %}
+                <td>Option</td>              
+            {% endif %}
+        </thead>
+
+        <tbody>
+            <tr>
+                <td>Entreprise</td>
+                <td> {{ tauxexecfin.budget }} </td>
+                <td> {{ tauxexecfin.depenses }} </td>
+                <td> {{ tauxexecfin.taux * 100 }}%</td>
+                {% if user.poste != 'Client' %}
+                    <td><a href="/projets/{{ projet.id }}/tauxexecfin/{{ tauxexecfin.id }}/edit">Recalculer</a></td>                                        
+                {% endif %}
+
+            </tr>
+        </tbody>
+    </table>
+
+    <h1>Exécution physique</h1>
+    <hr class='hr-titre'>
+
+    <table border="1">
+        <thead>
+            <td>Debut des travaux</td>
+            <td>Delai d'execution</td>
+            <td>Nombre de mois consommé</td>
+            <td>Taux d'exécution physique</td>
+            {% if user.poste != 'Client' %}
+                <td>Option</td>                                        
+            {% endif %}
+
+        </thead>
+
+        <tbody>
+            <tr>
+                <td>{{ projet.demarrage|date('m/Y') }}</td>
+                <td> {{ tauxexecphys.delai }} </td>
+                <td> {{ tauxexecphys.duree }} </td>
+                <td> {{ tauxexecphys.taux * 100 }}%</td>
+                {% if user.poste != 'Client' %}
+                    <td><a href="/projets/{{ projet.id }}/tauxexecphys/{{ tauxexecphys.id }}/edit">Recalculer</a></td>                                    
+                {% endif %}
+            </tr>
+        </tbody>
+    </table>
+
+    <h1>Observations</h1>
+    <hr class='hr-titre hr3'>
+    
+    {% if observations|length > 0 %}
+        <h2>Les différentes observations</h2>
+
+        <div id='observations'>
+            {% for observation in observations %}
+                <div>
+                    <p class='observations-h'><span>Auteur</span> : {{ observation.auteur }} </p>
+                    <p class='observations-h'><span>Fonction</span> : {{ user.poste }} </p>
+                    <p class='observations-h'><span>Date</span> : {{ observation.date|date('d/m/Y') }} </p>
+                    <p id='message'> {{ observation.message }} </p>
+                </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <h2>Aucune observation n'a encore été faite</h2>
+    {% endif %}
+    
+    <h3><a href="/projets/{{ projet.id }}/addobservation"><button class='add2'>Ajouter une observation</button></a></h3>  
+
+    <h1>Illustration</h1>  
+    <hr class='hr-titre hr4'>
+
+        {% if images|length > 0 %}
+            <h2>Quelques images du chantier</h2>
+            <div id="images">
+                {% for image in images %}
+                    <div class='illustration'>
+                        <div class='image'><img src="{{ image.path }}" alt="" width="100%" height="100%"></div>
+                        <p>Date : {{ image.date|date('d/m/Y') }}</p>
+                    </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <h2>Vous n'avez pas encore associé d'images à ce projet</h2>
+        {% endif %}
+
+    {% if user.poste != 'Client' %}
+        <h3><a href="/projets/{{ projet.id }}/addimage"><button class='add2'>Ajouter une image</button></a></h3>                                        
+    {% endif %}
+
+    <div id='options'>
+        <h3><a href="/generatepdf/projets/{{ projet.id }}"><button class='options'>Exporter un fichier PDF</button></a></h3>
+        <h3><a href="/projets"><button class='options'>Revenir à la liste des projets</button></a></h3>
+    </div>
+{% endblock %}

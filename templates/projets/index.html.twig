@@ -1,0 +1,103 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Projets{% endblock %}
+
+{# {% block css %}<link rel="stylesheet" href="{{ asset('css/projet_index.css') }}">{% endblock %} #}
+
+{% block body %}
+    <div id="header">
+        <div id="logo"><img src="{{ asset('images/AE-PNG.png') }}" alt="Logo" width="100%" height='100%'></div>
+
+        <div id="infos">
+            <p id="infos-h">Informations</p>
+            <p><span>Nom&Prenom</span> : {{ user.prenom }} {{ user.nom }}</p>
+            <p><span>Fonction</span> : {{ user.poste }} </p>
+            <p id='btn'><a href="/logout"><button id='decon'>Se deconncecter</button></a></p>
+        </div>
+    </div>
+
+    <h1>Vos projets</h1>
+    <hr id='hr-titre'>
+
+    <p id="projet-text">
+        {% if projets|length == 0 %}
+                Vous n'avez pas encore de projets
+
+            {% else %}
+                {% if projets|length == 1 %}
+                        Vous avez {{ projets|length }} projet au total
+                    {% else %}
+                        Vous avez {{ projets|length }} projets au total
+                {% endif %}
+        {% endif %}
+    </p>
+
+    {% if projets|length > 0 or imports|length > 0 %}       
+    <div id='container'>
+        <div class='lignes'>
+            <div class='colonne-nom entete'>
+                Nom du projet
+            </div>
+
+            <div class="colonne-statut entete">
+                Statut
+            </div>
+
+            <div class='colonne-option entete'>
+                Option
+            </div>
+        </div>
+        <hr class='hr-lignes'>
+
+        {% for projet in projets %}
+            <div class='lignes'>
+                <div class='colonne-nom description'>
+                    {{ projet.nom }}
+                </div>
+
+                <div class="colonne-statut description">
+                    {% if projet.estTermine %}
+                    Terminé
+                    {% else %}
+                    En cours
+                    {% endif %}
+                </div>
+
+                <div class='colonne-option'>
+                    <a href="/projets/{{ projet.id }}"><button class='option-btn'>Plus de détails</button></a>
+                </div>
+            </div>
+            <hr class='hr-lignes'>
+        {% endfor %}
+
+        {% for importprojet in imports %}
+            <div class='lignes'>
+                <div class='colonne-nom description'>
+                    {{ importprojet.nom }}
+                </div>
+
+                <div class="colonne-statut description">
+                    {% if importprojet.estTermine %}
+                    Terminé
+                    {% else %}
+                    En cours
+                    {% endif %}
+                </div>
+
+                <div class='colonne-option'>
+                    <a href="/projets/{{ importprojet.id }}"><button class='option-btn'>Plus de détails</button></a>
+                </div>
+            </div>
+            <hr class='hr-lignes'>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <div id='add'>
+        {% if user.poste != 'Client' %}
+            <div><a href="/projet/create"><button class='add-import'>Débuter un projet</button></a></div>
+        {% endif %}
+        
+        <div><a href="/projet/import"><button class='add-import'>Importer un projet</button></a></div>
+    </div>
+{% endblock %}
